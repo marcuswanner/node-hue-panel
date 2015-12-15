@@ -1,0 +1,46 @@
+<meta charset="UTF-8">
+<title><%= branding %></title>
+
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+<script>
+function hsv2hsl(hue,sat,val){
+    hue /= 65536;
+    sat /= 256;
+    val /= 256;
+    return[
+        hue*360,
+        sat*val/((hue=(2-sat)*val)<1?hue:2-hue)*100, 
+        hue/2*100
+    ]
+}
+
+hsl2hsv=function(hue,sat,light){
+    hue /= 360;
+    sat /= 100;
+    light /= 100;
+    sat*=light<.5?light:1-light;
+    return[
+        hue*65536,
+        2*sat/(light+sat)*256,
+        (light+sat)*256
+    ]
+}
+
+</script>
+
+<script>
+//for color picker
+var YUI_config={"filter":"min","maxURLLength":1024,"root":"3.18.1/","groups":{"site":{"combine":true,"comboBase":"/combo/js?","root":"","modules":{"hoverable":{"path":"hoverable-min.js","requires":["event-hover","node-base","node-event-delegate"]},"search":{"path":"search-min.js","requires":["autocomplete","autocomplete-highlighters","node-pluginhost"]},"api-filter":{"path":"apidocs/api-filter-min.js","requires":["autocomplete-base","autocomplete-highlighters","autocomplete-sources"]},"api-list":{"path":"apidocs/api-list-min.js","requires":["api-filter","api-search","event-key","node-focusmanager","tabview"]},"api-search":{"path":"apidocs/api-search-min.js","requires":["autocomplete-base","autocomplete-highlighters","autocomplete-sources","escape"]}}}}};
+if (location.protocol.indexOf('https') > -1) {
+    YUI_config.comboBase = 'https://yui-s.yahooapis.com/combo?';
+    YUI_config.combine = true;
+}
+</script>
+<script src="http://yui.yahooapis.com/3.18.1/build/yui/yui-min.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<style>
+	body 	{ padding-top:50px; }
+</style>

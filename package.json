@@ -1,0 +1,12 @@
+{
+  "name": "node-hue-panel",
+  "main": "server.js",
+  "dependencies": {
+    "ejs": "^1.0.0",
+    "express": "^4.6.1",
+    "express-ejs-layouts": "^1.1.0",
+    "config": "^1.17.1",
+    "socket.io": "^1.0.0",
+    "node-hue-api": "^1.2.1"
+  }
+}

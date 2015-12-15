@@ -1,0 +1,34 @@
+<div class="col-sm-6 col-md-<%= Math.max(4, Math.floor(12/lights)) %> col-lg-<%= Math.max(2, Math.floor(12/lights)) %> btn-group-vertical" role="group">
+    <center><h1>
+        <span id="ooback<%= i %>" class="label label-default">
+            <span id="onoff<%= i %>" class="glyphicon <%= lwait %>"></span> <%= i %>
+        </span>
+    </h1></center>
+    <div class="btn-group btn-group-justified" role="group">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-default" onclick="on(<%= i %>, false)" title="Turn Off">
+                <h3><span class="glyphicon <%= loff %>"></h3>
+            </button>
+        </div>
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-default" onclick="on(<%= i %>, true)" title="Turn On">
+                <h3><span class="glyphicon <%= lon %>"></h3>
+            </button>
+        </div>
+    </div>
+    <div class="btn-group btn-group-justified" role="group">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-default" onclick="bri(<%= i %>, -50)" title="Turn Down">
+                <h3><span class="glyphicon glyphicon-minus"></h3>
+            </button>
+        </div>
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-default" onclick="bri(<%= i %>, 50)" title="Turn Up">
+                <h3><span class="glyphicon glyphicon-plus"></h3>
+            </button>
+        </div>
+    </div>
+    <button type="button" class="btn btn-default" onclick="color(<%= i %>)" title="Set Color">
+        <h3><span class="glyphicon glyphicon-arrow-up"></h3>
+    </button>
+</div>

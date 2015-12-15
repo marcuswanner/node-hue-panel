@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<% include head %>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    //class names for different light state indicators
+    <% var lwait = "glyphicon-hourglass"; %>
+    <% var lon = "glyphicon-asterisk"; %>
+    <% var loff = "glyphicon-off"; %>
+    var lwait = "<%= lwait %>";
+    var lon = "<%= lon %>";
+    var loff = "<%= loff %>";
+
+    //initialize brightness values with 0's
+    var brights = Array.apply(null, new Array(<%= lights %>)).map(Number.prototype.valueOf,0);
+    var socket = io();
+
+    //socket events we send
+    function changed(index) {
+        $("#onoff"+index).addClass(lwait).removeClass(lon).removeClass(loff);
+    }
+    function on(index, state) {
+        changed(index);
+        socket.emit('on', {index: index, state: state});
+    }
+    function color(index) {
+        changed(index);
+        var hsvcol = hsl2hsv(hslPicker[0], hslPicker[1], hslPicker[2]);
+        brights[index-1] = hsvcol[2];
+        socket.emit('color', {index: index, color: hsvcol});
+    }
+    function bri(index, inc) {
+        changed(index);
+        brights[index-1] = Math.max(0, Math.min(255, brights[index-1]+inc));
+        socket.emit('bri', {index: index, bri: brights[index-1]});
+    }
+
+    //socket events we receive
+    socket.on('hue-error', function (data) {
+        console.log("hue-error: " + data);
+        showalert("'"+data["address"]+"': error "+data["type"]+": "+data["message"],"alert-danger");
+    });
+    socket.on('hue-success', function (data) {
+        console.log("hue-success: " + data["message"]);
+        showalert(data["message"],"alert-success");
+    });
+    socket.on('hue-lights', function (data) {
+        console.log(data);
+        YUI().use('color', function(Y){
+        for (var i = 1; i <= <%= lights %>; i++) {
+            var e = $("#onoff"+i)
+            var b = $("#ooback"+i)
+            if (data["lights"][i-1]["state"]["on"]) {
+                e.addClass(lon).removeClass(loff)
+                var hslArr = hsv2hsl(
+                        data["lights"][i-1]["state"]["hue"],
+                        data["lights"][i-1]["state"]["sat"],
+                        data["lights"][i-1]["state"]["bri"]);
+                var hslString = Y.Color.fromArray(hslArr, Y.Color.TYPES.HSL);
+                b.css("background", hslString);
+                brights[i-1] = data["lights"][i-1]["state"]["bri"];
+            } else {
+                e.addClass(loff).removeClass(lon)
+                b.css("background", "rgba(127, 127, 127, 0.3)");
+                brights[i-1] = 0;
+                console.log("light off bri " +brights[i-1]);
+            }
+            e.removeClass(lwait);
+        }});
+    });
+
+    function showalert(message,alerttype) {
+        var id="alertdiv"+Date.now();
+        $('#alert_placeholder').after('<div id="'+id+'" class="alert ' +  alerttype +
+                ' alert-dismissable" role="alert"><button type="button" class="close" ' +
+                'data-dismiss="alert"><span>&times;</span></button>'+message+'</div>')
+        setTimeout(function() {
+            $("#"+id+"").fadeOut("slow", function(){$(this).remove()});
+        }, 5000);
+    }
+</script>
+</head>
+<body class="container">
+<header><% include header %></header>
+<main>
+    <div class="jumbotron">
+        <div class="grid">
+            <div class="row">
+                <% for (var i = 1; i <= lights; i++) { %><% include light %><% } %>
+                <% if (lights == 0) {%>
+                    <h1>Sorry, folks...</h1>
+                    <p>attempting to contact gateway</p>
+                    <script>setTimeout(function(){window.location.reload(1);}, 3000);</script>
+                <% } %>
+            </div>
+            <div><center><% include colorpicker %></center></div>
+        </div>
+        <br/>
+        <div id="alert_placeholder"></div>
+    </div>
+</main>
+<footer><% include footer %></footer>
+</body>
+</html>
