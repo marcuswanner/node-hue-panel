@@ -136,4 +136,4 @@ function update() {
   }
 }
 
-http.listen(8080);
+http.listen(config.get("listen"));

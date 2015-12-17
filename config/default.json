@@ -1,5 +1,6 @@
 {
   "branding": "huepanel.local",
+  "listen": 8080,
   "hue": {
     "gateway": "192.168.1.12",
     "username": "d41d8cd98f00b204e9800998ecf8427e"
