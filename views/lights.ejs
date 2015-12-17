@@ -51,15 +51,15 @@
         for (var i = 1; i <= <%= lights %>; i++) {
             var e = $("#onoff"+i)
             var b = $("#ooback"+i)
-            if (data["lights"][i-1]["state"]["on"]) {
+            if (data["lights"][i-1]["on"]) {
                 e.addClass(lon).removeClass(loff)
                 var hslArr = hsv2hsl(
-                        data["lights"][i-1]["state"]["hue"],
-                        data["lights"][i-1]["state"]["sat"],
-                        data["lights"][i-1]["state"]["bri"]);
+                        data["lights"][i-1]["hue"],
+                        data["lights"][i-1]["sat"],
+                        data["lights"][i-1]["bri"]);
                 var hslString = Y.Color.fromArray(hslArr, Y.Color.TYPES.HSL);
                 b.css("background", hslString);
-                brights[i-1] = data["lights"][i-1]["state"]["bri"];
+                brights[i-1] = data["lights"][i-1]["bri"];
             } else {
                 e.addClass(loff).removeClass(lon)
                 b.css("background", "rgba(127, 127, 127, 0.3)");

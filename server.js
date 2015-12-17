@@ -116,14 +116,18 @@ function update() {
         wait = setTimeout(update, 1000);
         return;
       }
-      stats.push(result);
-      //console.log("got "+i);
+      stats.push({
+          on: result["state"]["on"],
+          hue: result["state"]["hue"],
+          sat: result["state"]["sat"],
+          bri: result["state"]["bri"]
+      });
       i++;
       if (i > lights) {
         io.emit("hue-lights", {"lights": stats});
         console.log("pushed status of " + stats.length + " lights to " +
                     io.engine.clientsCount + " users");
-        wait = setTimeout(update, 10000);
+        wait = setTimeout(update, 1000);
         return;
       }
       hue.lightStatus(i, statusChain);
