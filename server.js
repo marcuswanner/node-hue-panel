@@ -8,6 +8,10 @@ var hue = node_hue_api.HueApi(config.get('hue.gateway'), config.get('hue.usernam
 var lightState = node_hue_api.lightState;
 var branding = config.get('branding');
 
+function lightid(i) {
+  return lights[i-1]['id'];
+}
+
 io.sockets.on('connection', function (socket) {
   console.log('user connected');
   triggerUpdate();
@@ -21,7 +25,7 @@ io.sockets.on('connection', function (socket) {
       console.log("off " + data["index"]);
       state.off();
     }
-    hue.setLightState(parseInt(data["index"]), state, function(err, result) {
+    hue.setLightState(lightid(parseInt(data["index"])), state, function(err, result) {
       triggerUpdate();
       if (err) {
         console.log(err);
@@ -36,7 +40,7 @@ io.sockets.on('connection', function (socket) {
   socket.on('color', function (data) {
     state = lightState.create();
     state.on().hue(data["color"][0]).sat(data["color"][1]).bri(data["color"][2]);
-    hue.setLightState(parseInt(data["index"]), state, function(err, result) {
+    hue.setLightState(lightid(parseInt(data["index"])), state, function(err, result) {
       triggerUpdate();
       if (err) {
         console.log(err);
@@ -51,7 +55,7 @@ io.sockets.on('connection', function (socket) {
     state = lightState.create();
     bri = Math.max(0, Math.min(255, data["bri"]));
     state.on().bri(bri);
-    hue.setLightState(parseInt(data["index"]), state, function(err, result) {
+    hue.setLightState(lightid(parseInt(data["index"])), state, function(err, result) {
       triggerUpdate();
       if (err) {
         console.log(err);
@@ -73,13 +77,13 @@ io.sockets.on('connection', function (socket) {
 app.set('view engine', 'ejs');
 
 app.get('/', function(req, res) {
-  res.render('lights', {lights:lights,branding:branding});
+  res.render('lights', {lights:lights.length,branding:branding});
 });
 
 app.use('/images', express.static('images'));
 
 var wait = setTimeout(update, 0);
-var lights = 0;
+var lights = [];
 
 function triggerUpdate() {
   update();
@@ -96,8 +100,8 @@ function update() {
       if (err) {
         console.log(err);
       } else {
-        lights = result["lights"].length;
-        console.log("gateway says we have "+lights+" lights");
+        lights = result["lights"];
+        console.log("gateway says we have "+lights.length+" lights");
       }
       wait = setTimeout(update, 0);
     });
@@ -107,7 +111,7 @@ function update() {
     wait = -1;
     return;
   }
-  if (lights > 0) {
+  if (lights.length > 0) {
     var i=1;
     var stats = [];
     var statusChain = function(err, result) {
@@ -123,16 +127,16 @@ function update() {
           bri: result["state"]["bri"]
       });
       i++;
-      if (i > lights) {
+      if (i > lights.length) {
         io.emit("hue-lights", {"lights": stats});
         console.log("pushed status of " + stats.length + " lights to " +
                     io.engine.clientsCount + " users");
         wait = setTimeout(update, 1000);
         return;
       }
-      hue.lightStatus(i, statusChain);
+      hue.lightStatus(lightid(i), statusChain);
     };
-    hue.lightStatus(i, statusChain);
+    hue.lightStatus(lightid(i), statusChain);
   }
 }
 
