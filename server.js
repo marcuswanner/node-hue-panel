@@ -44,8 +44,8 @@ io.sockets.on('connection', function (socket) {
         console.log(err);
         socket.emit("hue-error", err);
       } else {
-        console.log("hue color " + data["index"] + "->h" + Math.round(data["color"][0]/256) + "v" +
-                    data["color"][1] + " successful");
+        console.log("hue color " + data["index"] + "->h" + Math.round(data["color"][0]/256) + "s" +
+                    Math.round(data["color"][1]) + " successful");
         socket.emit("hue-success", {message: "successfully changed color of light " + data["index"]});
       }
     });
