@@ -39,7 +39,7 @@ io.sockets.on('connection', function (socket) {
   });
   socket.on('color', function (data) {
     state = lightState.create();
-    state.on().hue(data["color"][0]).sat(data["color"][1]).bri(data["color"][2]);
+    state.on().hue(data["color"][0]).sat(data["color"][1]);
     hue.setLightState(lightid(parseInt(data["index"])), state, function(err, result) {
       triggerUpdate();
       if (err) {
@@ -129,8 +129,6 @@ function update() {
       i++;
       if (i > lights.length) {
         io.emit("hue-lights", {"lights": stats});
-        console.log("pushed status of " + stats.length + " lights to " +
-                    io.engine.clientsCount + " users");
         wait = setTimeout(update, 1000);
         return;
       }
