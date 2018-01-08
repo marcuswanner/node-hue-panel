@@ -19,10 +19,8 @@ io.sockets.on('connection', function (socket) {
   socket.on('on', function (data) {
     state = lightState.create();
     if (data["state"]) {
-      console.log("on " + data["index"]);
       state.on();
     } else {
-      console.log("off " + data["index"]);
       state.off();
     }
     hue.setLightState(lightid(parseInt(data["index"])), state, function(err, result) {
@@ -31,7 +29,7 @@ io.sockets.on('connection', function (socket) {
         console.log(err);
         socket.emit("hue-error", err);
       } else {
-        console.log("hue call successful");
+        console.log("hue " + (data["state"] ? "on " : "off ") + data["index"] + " successful");
         socket.emit("hue-success", {message: "successfully switched light " +
                     data["index"] + (data["state"] ? " on" : " off")});
       }
@@ -46,7 +44,8 @@ io.sockets.on('connection', function (socket) {
         console.log(err);
         socket.emit("hue-error", err);
       } else {
-        console.log("hue color successful");
+        console.log("hue color " + data["index"] + "->h" + Math.round(data["color"][0]/256) + "v" +
+                    data["color"][1] + " successful");
         socket.emit("hue-success", {message: "successfully changed color of light " + data["index"]});
       }
     });
@@ -61,7 +60,7 @@ io.sockets.on('connection', function (socket) {
         console.log(err);
         socket.emit("hue-error", err);
       } else {
-        console.log("hue bri successful");
+        console.log("hue bri " + data["index"] + "->" + bri + " successful");
         socket.emit("hue-success", {message: "successfully set brightness of light " +
                     data["index"] + " to " + bri});
       }
